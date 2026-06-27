@@ -44,6 +44,8 @@ Implemented methods:
 Current deployed testnet contract ID:
 
 - CAH7X2U3V5JSG2AURDO5YSERVCWYYKEBGQBPODJOZI5EU36ALQF3CCCZ
+- **Explorer Link**: [Stellar.expert Testnet Explorer - Contract CAH7X2...](https://stellar.expert/explorer/testnet/contract/CAH7X2U3V5JSG2AURDO5YSERVCWYYKEBGQBPODJOZI5EU36ALQF3CCCZ)
+
 
 Stellar network settings:
 
