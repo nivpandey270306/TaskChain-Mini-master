@@ -7,8 +7,5 @@
     "test": "cargo test --package task-registry",
     "deploy": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/task_registry.wasm --source default --network testnet",
     "invoke": "soroban contract invoke"
-  },
-  "devDependencies": {
-    "soroban-cli": "^20.5.0"
   }
 }
