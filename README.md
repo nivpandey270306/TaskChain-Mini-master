@@ -6,7 +6,7 @@ It includes a Rust smart contract, a React frontend with Freighter wallet integr
 ## Live Links
 
 - Live demo: https://taskchainmini.vercel.app
-- Repository: 
+- Repository: https://github.com/nivpandey270306/TaskChain-Mini-master
 - Demo video (local repo file): [assets/demo.mp4](assets/demo.mp4)
 
 ## Features
