@@ -20,3 +20,5 @@ coverage/
 # Cargo/Rust
 target/
 **/target/
+test_snapshots/
+**/test_snapshots/

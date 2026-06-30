@@ -115,23 +115,29 @@ impl TaskRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use soroban_sdk::testutils::Address as AddressTestUtils;
+    use soroban_sdk::testutils::Address as _;
+    use soroban_sdk::testutils::Ledger as _;
 
     #[test]
     fn test_create_task() {
         let env = Env::default();
-        env.ledger().set_timestamp(100);
         
-        let contract = TaskRegistry;
-        let user = Address::random(&env);
+        let mut ledger_info = env.ledger().get();
+        ledger_info.timestamp = 100;
+        env.ledger().set(ledger_info);
         
-        contract.init(env.clone());
+        let contract_id = env.register_contract(None, TaskRegistry);
+        let client = TaskRegistryClient::new(&env, &contract_id);
         
-        let id = contract.create_task(env.clone(), user.clone(), String::from_slice(&env, "Test task"));
+        let user = Address::generate(&env);
+        
+        client.init();
+        
+        let id = client.create_task(&user, &String::from_str(&env, "Test task"));
         assert_eq!(id, 1);
         
-        if let Some(task) = contract.get_task(env, id) {
-            assert_eq!(task.content, String::from_slice(&env, "Test task"));
+        if let Some(task) = client.get_task(&id) {
+            assert_eq!(task.content, String::from_str(&env, "Test task"));
             assert_eq!(task.done, false);
         }
     }
@@ -139,22 +145,27 @@ mod tests {
     #[test]
     fn test_toggle_task() {
         let env = Env::default();
-        env.ledger().set_timestamp(100);
         
-        let contract = TaskRegistry;
-        let user = Address::random(&env);
+        let mut ledger_info = env.ledger().get();
+        ledger_info.timestamp = 100;
+        env.ledger().set(ledger_info);
         
-        contract.init(env.clone());
+        let contract_id = env.register_contract(None, TaskRegistry);
+        let client = TaskRegistryClient::new(&env, &contract_id);
         
-        let id = contract.create_task(env.clone(), user.clone(), String::from_slice(&env, "Toggle test"));
+        let user = Address::generate(&env);
         
-        if let Some(task) = contract.get_task(env.clone(), id) {
+        client.init();
+        
+        let id = client.create_task(&user, &String::from_str(&env, "Toggle test"));
+        
+        if let Some(task) = client.get_task(&id) {
             assert_eq!(task.done, false);
         }
         
-        contract.toggle_task(env.clone(), user.clone(), id);
+        client.toggle_task(&user, &id);
         
-        if let Some(updated) = contract.get_task(env, id) {
+        if let Some(updated) = client.get_task(&id) {
             assert_eq!(updated.done, true);
         }
     }
@@ -162,19 +173,24 @@ mod tests {
     #[test]
     fn test_multiple_users() {
         let env = Env::default();
-        let contract = TaskRegistry;
-        let user1 = Address::random(&env);
-        let user2 = Address::random(&env);
+        let contract_id = env.register_contract(None, TaskRegistry);
+        let client = TaskRegistryClient::new(&env, &contract_id);
         
-        contract.init(env.clone());
+        let user1 = Address::generate(&env);
+        let user2 = Address::generate(&env);
         
-        contract.create_task(env.clone(), user1.clone(), String::from_slice(&env, "User 1 task"));
-        contract.create_task(env.clone(), user2.clone(), String::from_slice(&env, "User 2 task"));
+        client.init();
         
-        let user1_tasks = contract.get_user_task_ids(env.clone(), user1);
-        let user2_tasks = contract.get_user_task_ids(env, user2);
+        client.create_task(&user1, &String::from_str(&env, "User 1 task"));
+        client.create_task(&user2, &String::from_str(&env, "User 2 task"));
+        
+        let user1_tasks = client.get_user_task_ids(&user1);
+        let user2_tasks = client.get_user_task_ids(&user2);
         
         assert_eq!(user1_tasks.len(), 1);
         assert_eq!(user2_tasks.len(), 1);
     }
 }
+
+
+
